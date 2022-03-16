@@ -1,19 +1,19 @@
 GET http://localhost:3000/api/jokes
 ###
-GET http://localhost:3000/api/jokes/UOwDSulXnp2qtwEPpPFHd
+GET http://localhost:3000/api/jokes/6231e0fd6db84695c87f76f7
 ###
 POST http://localhost:3000/api/jokes
 content-type: application/json
 
 {
-  "joke": "!false — It's funny because it's true."
+  "text": "this is the joke text"
 }
 ###
-DELETE http://localhost:3000/api/jokes/nvhGGI9AeEZKyVPDZorjQ
+DELETE http://localhost:3000/api/jokes/6231ee38aa719d1e879f1137
 ###
-PATCH http://localhost:3000/api/jokes/nvhGGI9AeEZKyVPDZorjQ
+PATCH http://localhost:3000/api/jokes/6231e0fd6db84695c87f76f7
 content-type: application/json
 
 {
-  "joke": "Why did the programmer quit his job? Because they didn't get arrays."
+  "text": "jlk"
 }

@@ -14,3 +14,15 @@ a {
 * {
   box-sizing: border-box;
 }
+
+main {
+  padding: 2rem;
+  margin: 0 auto;
+  max-width: 65ch;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
