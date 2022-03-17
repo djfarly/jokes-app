@@ -1,8 +1,9 @@
 import Head from "next/head";
 import { useState } from "react";
 import useSWR from "swr";
-import { Joke } from "../components/Joke/Joke";
+import { Container, Joke } from "../components/Joke/Joke";
 import { JokeForm } from "../components/JokeForm/JokeForm";
+import styled from "styled-components";
 
 const fetcher = (resource, init) =>
   fetch(resource, init).then((res) => res.json());
@@ -32,30 +33,48 @@ export default function Home() {
   }
 
   return (
-    <div>
+    <>
       <Head>
         <title>Jokes App</title>
       </Head>
 
       <main>
-        <JokeForm
-          onSubmitJoke={handleCreateJoke}
-          disabled={isCreating}
-          submitText={isCreating ? "Creating joke…" : "Create joke"}
-          error={error}
-          id="create"
-        />
-        <hr />
+        <h1>Jokes app</h1>
+        <Container>
+          <div>Create a new joke</div>
+          <JokeForm
+            onSubmitJoke={handleCreateJoke}
+            disabled={isCreating}
+            submitText={isCreating ? "Creating joke…" : "Create joke"}
+            error={error}
+            id="create"
+          />
+        </Container>
         {jokes.data ? (
-          <ul>
+          <JokeList>
             {jokes.data.map((joke) => (
-              <Joke key={joke._id} joke={joke} jokes={jokes} />
+              <li key={joke._id}>
+                <Joke joke={joke} jokes={jokes} />
+              </li>
             ))}
-          </ul>
+          </JokeList>
         ) : (
           "Loading…"
         )}
       </main>
-    </div>
+    </>
   );
 }
+
+const JokeList = styled.ul`
+  list-style: none;
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin: 0;
+  padding: 0;
+
+  > li {
+    flex: 1 0 30ch;
+  }
+`;

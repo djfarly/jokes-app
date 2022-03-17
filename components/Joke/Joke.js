@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { JokeForm } from "../JokeForm/JokeForm";
 
+import styled from "styled-components";
+
 export function Joke({ joke, jokes }) {
   const [isEditMode, setIsEditMode] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
@@ -42,7 +44,7 @@ export function Joke({ joke, jokes }) {
 
   if (isEditMode) {
     return (
-      <li>
+      <Container>
         <JokeForm
           defaultValue={joke.text}
           onSubmitJoke={handleEditJoke}
@@ -51,17 +53,42 @@ export function Joke({ joke, jokes }) {
           error={error}
           id={joke._id}
         />
-      </li>
+      </Container>
     );
   } else {
     return (
-      <li>
+      <Container>
         <span>{joke.text}</span>
-        <button onClick={handleEditButtonClick}>Edit</button>
-        <button onClick={handleDeleteButtonClick} disabled={isDeleting}>
-          Delete
-        </button>
-      </li>
+        <Buttons>
+          <button onClick={handleEditButtonClick}>Edit</button>
+          <button onClick={handleDeleteButtonClick} disabled={isDeleting}>
+            Delete
+          </button>
+        </Buttons>
+      </Container>
     );
   }
 }
+
+export const Container = styled.article`
+  padding: 1rem 1rem 0.75rem 1rem;
+  background-color: rgb(246 246 246);
+  box-shadow: 0 0 10px rgb(0 0 0 / 6%), 0 5px 20px rgb(0 0 0 / 5%);
+  height: 100%;
+  display: grid;
+  gap: 1rem;
+
+  > form {
+    height: 100%;
+  }
+`;
+
+const Buttons = styled.div`
+  margin-top: auto;
+  display: flex;
+  gap: 0.5rem;
+
+  > button {
+    flex: 1 0 auto;
+  }
+`;
