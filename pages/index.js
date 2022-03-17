@@ -1,22 +1,35 @@
 import Head from "next/head";
-import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import useSWR from "swr";
+import { Joke } from "../components/Joke/Joke";
+import { JokeForm } from "../components/JokeForm/JokeForm";
+
+const fetcher = (resource, init) =>
+  fetch(resource, init).then((res) => res.json());
 
 export default function Home() {
-  const [jokes, setJokes] = useState();
+  const jokes = useSWR("/api/jokes", fetcher);
 
-  useEffect(() => {
-    async function fetchJokes() {
-      try {
-        const response = await fetch("/api/jokes");
-        const jokesData = await response.json();
-        setJokes(jokesData);
-      } catch (error) {
-        console.log(error.message);
-      }
+  const [isCreating, setIsCreating] = useState(false);
+  const [error, setError] = useState();
+
+  async function handleCreateJoke(newText, form) {
+    setIsCreating(true);
+    const response = await fetch("/api/jokes", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ text: newText }),
+    });
+    const createdJoke = await response.json();
+    if (response.ok) {
+      jokes.mutate();
+      form.reset();
+      setError();
+    } else {
+      setError(createdJoke.error ?? "Something went wrong");
     }
-    fetchJokes();
-  }, []);
+    setIsCreating(false);
+  }
 
   return (
     <div>
@@ -25,21 +38,22 @@ export default function Home() {
       </Head>
 
       <main>
-        {jokes ? (
+        <JokeForm
+          onSubmitJoke={handleCreateJoke}
+          disabled={isCreating}
+          submitText={isCreating ? "Creating joke…" : "Create joke"}
+          error={error}
+        />
+        <hr />
+        {jokes.data ? (
           <ul>
-            {jokes.map((joke) => (
-              <li key={joke._id}>{joke.text}</li>
+            {jokes.data.map((joke) => (
+              <Joke key={joke._id} joke={joke} jokes={jokes} />
             ))}
           </ul>
         ) : (
           "Loading…"
         )}
-        <hr />
-        <div>
-          <Link href="/create">
-            <a>📝 Create new joke</a>
-          </Link>
-        </div>
       </main>
     </div>
   );
