@@ -49,6 +49,7 @@ export function Joke({ joke, jokes }) {
           disabled={isUpdating}
           submitText={isUpdating ? "Updating joke…" : "Update joke"}
           error={error}
+          id={joke._id}
         />
       </li>
     );

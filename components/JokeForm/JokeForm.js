@@ -4,6 +4,7 @@ export function JokeForm({
   submitText,
   error,
   defaultValue,
+  id,
 }) {
   function handleSubmit(event) {
     event.preventDefault();
@@ -12,11 +13,11 @@ export function JokeForm({
 
   return (
     <form onSubmit={handleSubmit}>
-      <label htmlFor="text">Joke text</label>
+      <label htmlFor={`text-${id}`}>Joke text</label>
       <input
         type="text"
         required
-        id="text"
+        id={`text-${id}`}
         name="text"
         defaultValue={defaultValue}
       />

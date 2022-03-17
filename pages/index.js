@@ -43,6 +43,7 @@ export default function Home() {
           disabled={isCreating}
           submitText={isCreating ? "Creating joke…" : "Create joke"}
           error={error}
+          id="create"
         />
         <hr />
         {jokes.data ? (
