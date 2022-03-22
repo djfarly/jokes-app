@@ -2,8 +2,11 @@ import { useState } from "react";
 import { JokeForm } from "../JokeForm/JokeForm";
 
 import styled from "styled-components";
+import useSWR from "swr";
 
-export function Joke({ joke, jokes }) {
+export function Joke({ joke }) {
+  const jokes = useSWR("/api/jokes");
+
   const [isEditMode, setIsEditMode] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
