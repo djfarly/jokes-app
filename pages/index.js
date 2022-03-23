@@ -1,43 +1,25 @@
 import Head from "next/head";
-import useSWR from "swr";
-import { Container } from "../components/Joke/Joke";
-import { JokeForm } from "../components/JokeForm/JokeForm";
-import { useCreateJoke } from "../utils/hooks/useCreateJoke";
 import JokeList from "../components/JokeList/JokeList";
 import LoginButton from "../components/LoginButton/LoginButton";
-import { getSession, useSession } from "next-auth/react";
+import { getSession } from "next-auth/react";
+import Link from "next/link";
 
 export default function Home() {
-  const { handleCreateJoke, isCreating, error } = useCreateJoke();
-
-  const { data: session } = useSession();
-
   return (
     <>
       <Head>
         <title>Jokes App</title>
       </Head>
-
       <main>
         <h1>Jokes app</h1>
         <LoginButton />
-        <Container>
-          {session ? (
-            <>
-              <div>Create a new joke</div>
-              <JokeForm
-                onSubmitJoke={handleCreateJoke}
-                disabled={isCreating}
-                submitText={isCreating ? "Creating joke…" : "Create joke"}
-                error={error}
-                id="create"
-              />
-            </>
-          ) : (
-            <div>Please login to write jokes</div>
-          )}
-        </Container>
-        <JokeList />
+        <nav>
+          <Link href="/my-jokes">
+            <a>👤 my jokes</a>
+          </Link>
+        </nav>
+        <h2>Feed</h2>
+        <JokeList type="feed" />
       </main>
     </>
   );
@@ -45,15 +27,6 @@ export default function Home() {
 
 export async function getServerSideProps(context) {
   const session = await getSession(context);
-
-  if (!session) {
-    return {
-      redirect: {
-        destination: "/auth/signin",
-        permanent: false,
-      },
-    };
-  }
 
   return {
     props: {

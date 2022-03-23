@@ -2,23 +2,25 @@ import useSWR from "swr";
 import { Joke } from "../Joke/Joke";
 import styled from "styled-components";
 
-export default function JokeList() {
-  const jokes = useSWR("/api/jokes");
-
-  console.log(jokes.data);
+export default function JokeList({ type }) {
+  const jokes = useSWR(type === "feed" ? "api/feed" : "/api/jokes");
 
   return (
     <>
-      {jokes.data && jokes.data.length > 0 ? (
-        <Ul>
-          {jokes.data.map((joke) => (
-            <li key={joke._id}>
-              <Joke joke={joke} />
-            </li>
-          ))}
-        </Ul>
+      {jokes.data && Array.isArray(jokes.data) ? (
+        jokes.data.length > 0 ? (
+          <Ul>
+            {jokes.data.map((joke) => (
+              <li key={joke._id}>
+                <Joke joke={joke} />
+              </li>
+            ))}
+          </Ul>
+        ) : (
+          <div>No jokes yet 🤷‍♂️</div>
+        )
       ) : (
-        "Loading…"
+        <div>Loading…</div>
       )}
     </>
   );
