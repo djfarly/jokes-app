@@ -5,9 +5,11 @@ import styled from "styled-components";
 export default function JokeList() {
   const jokes = useSWR("/api/jokes");
 
+  console.log(jokes.data);
+
   return (
     <>
-      {jokes.data ? (
+      {jokes.data && jokes.data.length > 0 ? (
         <Ul>
           {jokes.data.map((joke) => (
             <li key={joke._id}>

@@ -61,6 +61,11 @@ export function Joke({ joke }) {
   } else {
     return (
       <Container>
+        {joke.userId ? (
+          <small>Author: {joke.userId.name}</small>
+        ) : (
+          <small>Anon</small>
+        )}
         <span>{joke.text}</span>
         <Buttons>
           <button onClick={handleEditButtonClick}>Edit</button>
