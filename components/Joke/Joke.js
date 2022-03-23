@@ -1,56 +1,27 @@
-import { useState } from "react";
 import { JokeForm } from "../JokeForm/JokeForm";
-
 import styled from "styled-components";
-import useSWR from "swr";
+import { useEditJoke } from "../../utils/hooks/useEditJoke";
+import { useDeleteJoke } from "../../utils/hooks/useDeleteJoke";
+import { useSession } from "next-auth/react";
+
+const dateFormatter = Intl.DateTimeFormat("en", { dateStyle: "short" });
 
 export function Joke({ joke }) {
-  const jokes = useSWR("/api/jokes");
+  const { activateEditMode, error, handleEdit, isEditMode, isUpdating } =
+    useEditJoke(joke);
 
-  const [isEditMode, setIsEditMode] = useState(false);
-  const [isUpdating, setIsUpdating] = useState(false);
-  const [isDeleting, setIsDeleting] = useState(false);
-  const [error, setError] = useState();
+  const { handleDelete, isDeleting } = useDeleteJoke(joke);
 
-  async function handleEditJoke(newText) {
-    setIsUpdating(true);
-    const response = await fetch(`/api/jokes/${joke._id}`, {
-      method: "PATCH",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify({ text: newText }),
-    });
-    const updatedJoke = await response.json();
-    if (response.ok) {
-      jokes.mutate();
-      setError();
-      setIsEditMode(false);
-    } else {
-      setError(updatedJoke.error ?? "Something went wrong");
-    }
-    setIsUpdating(false);
-  }
-
-  function handleEditButtonClick() {
-    setIsEditMode(true);
-  }
-
-  async function handleDeleteButtonClick() {
-    setIsDeleting(true);
-    const response = await fetch(`/api/jokes/${joke._id}`, {
-      method: "DELETE",
-    });
-    if (response.ok) {
-      jokes.mutate();
-    }
-    setIsDeleting(false);
-  }
+  // we can only edit or delete our own jokes…
+  const { data: session } = useSession();
+  const isOwnJoke = joke.userId && session?.user?.id === joke.userId?._id;
 
   if (isEditMode) {
     return (
       <Container>
         <JokeForm
           defaultValue={joke.text}
-          onSubmitJoke={handleEditJoke}
+          onSubmitJoke={handleEdit}
           disabled={isUpdating}
           submitText={isUpdating ? "Updating joke…" : "Update joke"}
           error={error}
@@ -61,18 +32,32 @@ export function Joke({ joke }) {
   } else {
     return (
       <Container>
-        {joke.userId ? (
-          <small>Author: {joke.userId.name}</small>
-        ) : (
-          <small>Anon</small>
-        )}
-        <span>{joke.text}</span>
-        <Buttons>
-          <button onClick={handleEditButtonClick}>Edit</button>
-          <button onClick={handleDeleteButtonClick} disabled={isDeleting}>
-            Delete
-          </button>
-        </Buttons>
+        <q>{joke.text}</q>
+        <Info>
+          {joke.userId?.name ? <div>— {joke.userId.name}</div> : null}
+          {joke.createdAt ? (
+            <div>{dateFormatter.format(new Date(joke.createdAt))}</div>
+          ) : null}
+          {isOwnJoke ? (
+            <Buttons>
+              <button onClick={activateEditMode}>Edit</button>
+              <button
+                onClick={() => {
+                  if (
+                    confirm(
+                      `Please confirm to delete this joke:\n\n"${joke.text}"`
+                    )
+                  ) {
+                    handleDelete();
+                  }
+                }}
+                disabled={isDeleting}
+              >
+                Delete
+              </button>
+            </Buttons>
+          ) : null}
+        </Info>
       </Container>
     );
   }
@@ -91,8 +76,16 @@ export const Container = styled.article`
   }
 `;
 
-const Buttons = styled.div`
+const Info = styled.div`
   margin-top: auto;
+  display: flex;
+  align-items: center;
+  font-size: small;
+  justify-content: space-between;
+  flex-wrap: wrap;
+`;
+
+const Buttons = styled.div`
   display: flex;
   gap: 0.5rem;
 

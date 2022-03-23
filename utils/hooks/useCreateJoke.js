@@ -7,7 +7,7 @@ export function useCreateJoke() {
   const [isCreating, setIsCreating] = useState(false);
   const [error, setError] = useState();
 
-  async function handleCreateJoke(newText, form) {
+  async function handleCreate(newText, form) {
     setIsCreating(true);
     const response = await fetch("/api/jokes", {
       method: "POST",
@@ -28,6 +28,6 @@ export function useCreateJoke() {
   return {
     isCreating,
     error,
-    handleCreateJoke,
+    handleCreate,
   };
 }

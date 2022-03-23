@@ -7,7 +7,7 @@ export const GlobalStyle = createGlobalStyle`
 
   body {
     padding: 0;
-    max-width: 65ch;
+    max-width: 85ch;
     margin: 3rem auto;
   }
 

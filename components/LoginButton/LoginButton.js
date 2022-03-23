@@ -4,16 +4,35 @@ export default function LoginButton() {
   const { data: session } = useSession();
   if (session) {
     return (
-      <>
-        Signed in as {session.user.name} <br />
-        <button onClick={() => signOut()}>Sign out</button>
-      </>
+      <div
+        style={{
+          display: "flex",
+          alignItems: "baseline",
+          justifyContent: "space-between",
+        }}
+      >
+        <span>Signed in as {session.user.name}</span>
+        <button
+          onClick={() => signOut()}
+          style={{ backgroundColor: "lightgray" }}
+        >
+          Sign out
+        </button>
+      </div>
     );
   }
   return (
-    <>
-      Not signed in <br />
-      <button onClick={() => signIn()}>Sign in</button>
-    </>
+    <div
+      style={{
+        display: "flex",
+        alignItems: "baseline",
+        justifyContent: "space-between",
+      }}
+    >
+      <span>Not signed in</span>
+      <button onClick={() => signIn()} style={{ backgroundColor: "lightgray" }}>
+        Sign in
+      </button>
+    </div>
   );
 }
