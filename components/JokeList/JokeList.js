@@ -3,7 +3,7 @@ import { Joke } from "../Joke/Joke";
 import styled from "styled-components";
 
 export default function JokeList({ type }) {
-  const jokes = useSWR(type === "feed" ? "api/feed" : "/api/jokes");
+  const jokes = useSWR(type === "feed" ? "/api/feed" : "/api/jokes");
 
   return (
     <>
